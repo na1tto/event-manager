@@ -16,6 +16,7 @@ func (app *application) createEvent(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&event); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	err := app.models.Events.Insert(&event)

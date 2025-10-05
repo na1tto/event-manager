@@ -1,0 +1,80 @@
+definitions:
+  database.Event:
+    properties:
+      date:
+        type: string
+      description:
+        maxLength: 150
+        minLength: 10
+        type: string
+      id:
+        type: integer
+      location:
+        minLength: 3
+        type: string
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      ownerId:
+        type: integer
+    required:
+    - date
+    - description
+    - location
+    - name
+    type: object
+info:
+  contact: {}
+  description: A rest API in Go using Gin framework
+  title: Go Gin Rest API
+  version: "1.0"
+paths:
+  /api/v1/events:
+    get:
+      consumes:
+      - application/json
+      description: Returns all events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/database.Event'
+            type: array
+      summary: Returns all events
+      tags:
+      - Events
+  /api/v1/events/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a single event
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      summary: Returns a single event
+      tags:
+      - Events
+securityDefinitions:
+  BearerAuth:
+    description: Enter your bearer token in the format ++Bearer &lt;token&gt;**
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

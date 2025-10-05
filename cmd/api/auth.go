@@ -18,7 +18,7 @@ type registerRequest struct {
 
 type loginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"passowrd" binding:"required,min=8"`
+	Password string `json:"password" binding:"required,min=8"`
 }
 
 type loginResponse struct {
@@ -34,13 +34,13 @@ func (app *application) login(c *gin.Context) {
 	}
 
 	existingUser, err := app.models.Users.GetByEmail(auth.Email)
-	if existingUser == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
 		return
 	}
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong"})
+	if existingUser == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
 
@@ -50,14 +50,15 @@ func (app *application) login(c *gin.Context) {
 		return
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
-		"UserId": existingUser.Id,
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": existingUser.Id,
 		"expr":   time.Now().Add(time.Hour * 72).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(app.jwtSecret))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		return
 	}
 
 	c.JSON(http.StatusOK, loginResponse{Token: tokenString})

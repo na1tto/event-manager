@@ -25,6 +25,19 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
+// login logs a user in the application providing a bearer token
+//
+// @Summary 				Logs a user in the application providing a bearer token
+// @Description 		Logs a user in the application providing a bearer token through the JWT Login Method
+// @Tags 						Auth
+// @Accept 					json
+// @Produce 				json
+// @Param 					credentials body				loginRequest	true	"Login Credentials"
+// @Success 				200 					{object} 	loginResponse
+// @Failure					400						{string}	string "Invalid requisition payload"
+// @Failure					401						{string}	string "Invalid email or password"
+// @Failure 				500 					{string}	string "Something went wrong"
+// @Router /api/v1/auth/login [POST]
 func (app *application) login(c *gin.Context) {
 	var auth *loginRequest
 
@@ -64,6 +77,18 @@ func (app *application) login(c *gin.Context) {
 	c.JSON(http.StatusOK, loginResponse{Token: tokenString})
 }
 
+// registerUser registers a user in the database
+//
+// @Summary 				Registers a user in the database
+// @Description 		Registers a user in the database
+// @Tags 						Auth
+// @Accept 					json
+// @Produce 				json
+// @Param 					credentials body				registerRequest	true	"Register credentials"
+// @Success 				201 					{object} 	database.User
+// @Failure					400						{string}	string "Invalid requisition payload"
+// @Failure					500						{string}	string "Something went wrong"
+// @Router /api/v1/auth/register [POST]
 func (app *application) registerUser(c *gin.Context) {
 	var register registerRequest
 

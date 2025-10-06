@@ -24,12 +24,117 @@ definitions:
     - location
     - name
     type: object
+  database.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  main.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  main.loginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  main.registerRequest:
+    properties:
+      email:
+        type: string
+      name:
+        minLength: 2
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
 info:
   contact: {}
   description: A rest API in Go using Gin framework
   title: Go Gin Rest API
   version: "1.0"
 paths:
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Logs a user in the application providing a bearer token through
+        the JWT Login Method
+      parameters:
+      - description: Login Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/main.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/main.loginResponse'
+        "400":
+          description: Invalid requisition payload
+          schema:
+            type: string
+        "401":
+          description: Invalid email or password
+          schema:
+            type: string
+        "500":
+          description: Something went wrong
+          schema:
+            type: string
+      summary: Logs a user in the application providing a bearer token
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a user in the database
+      parameters:
+      - description: Register credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/main.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/database.User'
+        "400":
+          description: Invalid requisition payload
+          schema:
+            type: string
+        "500":
+          description: Something went wrong
+          schema:
+            type: string
+      summary: Registers a user in the database
+      tags:
+      - Auth
   /api/v1/events:
     get:
       consumes:

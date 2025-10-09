@@ -11,6 +11,20 @@ import (
 // this is the handler for the events operations
 // handlers (or controllers in other contexts), are responsible for receiving the request and responding
 
+// createEvent - Creates a event using the bearer token
+//
+// @Summary 				Creates a event
+// @Description 		Creates a event in the database using a bearer token
+// @Tags 						Events
+// @Accept 					json
+// @Produce 				json
+// @Param 					credentials body				database.Event	true	"Event informations"
+// @Success 				200 					{object} 	database.Event
+// @APIResponses(code = 400, message = "Bearer token is required", response = err.Error())
+// @ApiResponse(code = 400, message = "Bad request, adjust before retrying", response = err.Error())
+// @ApiResponse(code = 500, message = "Internal server error, failed to create event", response = err.Error())
+// @Security				BearerAuth
+// @Router /api/v1/events [POST]
 func (app *application) createEvent(c *gin.Context) {
 	var event database.Event //empty Event struct
 
@@ -85,6 +99,22 @@ func (app *application) getAllEvents(c *gin.Context) {
 	c.JSON(http.StatusOK, events)
 }
 
+// updateEvent - updates a event using the bearer token
+//
+// @Summary 				Updates a event
+// @Description 		Updates a event in the database using a bearer token
+// @Tags 						Events
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "event ID"
+// @Param 					credentials body				database.Event	true	"Updated event informations"
+// @Success 				200 					{object} 	database.Event
+// @Failure 400 {string} string = "Error: Invalid event ID"
+// @Failure 404 {string} string = "Error: Event not found"
+// @Failure 403 {string} string = "Error: You are not authorized to update this event"
+// @Failure 500 {string} string = "Error: Failed to retrieve event"
+// @Security				BearerAuth
+// @Router /api/v1/events/{id} [PUT]
 func (app *application) updateEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

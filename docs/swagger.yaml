@@ -152,6 +152,29 @@ paths:
       summary: Returns all events
       tags:
       - Events
+    post:
+      consumes:
+      - application/json
+      description: Creates a event in the database using a bearer token
+      parameters:
+      - description: Event informations
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/database.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/database.Event'
+      security:
+      - BearerAuth: []
+      summary: Creates a event
+      tags:
+      - Events
   /api/v1/events/{id}:
     get:
       consumes:
@@ -174,6 +197,50 @@ paths:
                 type: string
             type: object
       summary: Returns a single event
+      tags:
+      - Events
+    put:
+      consumes:
+      - application/json
+      description: Updates a event in the database using a bearer token
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated event informations
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/database.Event'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/database.Event'
+        "400":
+          description: 'Error: Invalid event ID'
+          schema:
+            type: string
+        "403":
+          description: 'Error: You are not authorized to update this event'
+          schema:
+            type: string
+        "404":
+          description: 'Error: Event not found'
+          schema:
+            type: string
+        "500":
+          description: 'Error: Failed to retrieve event'
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Updates a event
       tags:
       - Events
 securityDefinitions:

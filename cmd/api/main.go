@@ -18,7 +18,6 @@ import (
 // @in header 
 // @name Authorization
 // @description Enter your bearer token in the format ++Bearer &lt;token&gt;**
-
 type application struct {
 	port int
 	jwtSecret string

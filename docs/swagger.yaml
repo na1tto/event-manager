@@ -176,6 +176,42 @@ paths:
       tags:
       - Events
   /api/v1/events/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a event from the database using a bearer token
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: 'Error: Invalid event ID'
+          schema:
+            type: string
+        "403":
+          description: 'Error: You are not authorized to delete this event'
+          schema:
+            type: string
+        "404":
+          description: 'Error: Event not found'
+          schema:
+            type: string
+        "500":
+          description: 'Error: Failed to retrieve event'
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Deletes a event from the database
+      tags:
+      - Events
     get:
       consumes:
       - application/json
@@ -241,6 +277,52 @@ paths:
       security:
       - BearerAuth: []
       summary: Updates a event
+      tags:
+      - Events
+  /api/v1/events/{id}/attendees/{userId}:
+    post:
+      consumes:
+      - application/json
+      description: Adds a attendee to a event in the database (needs authetication)
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: attendee to be added
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: 'Error: Invalid event ID'
+          schema:
+            type: string
+        "403":
+          description: 'Error: You are not authorized to delete this event'
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: Error
+        "409":
+          description: 'Error: Attendee already exists'
+          schema:
+            type: string
+        "500":
+          description: 'Error: Failed to retrieve event'
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Adds a attendee to a event in the databse
       tags:
       - Events
 securityDefinitions:

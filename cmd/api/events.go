@@ -156,6 +156,21 @@ func (app *application) updateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedEvent)
 }
 
+// deleteEvent - deletes a event using the bearer token
+//
+// @Summary 				Deletes a event from the database
+// @Description 		Deletes a event from the database using a bearer token
+// @Tags 						Events
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "event ID"
+// @Success 				204
+// @Failure 400 {string} string = "Error: Invalid event ID"
+// @Failure 404 {string} string = "Error: Event not found"
+// @Failure 403 {string} string = "Error: You are not authorized to delete this event"
+// @Failure 500 {string} string = "Error: Failed to retrieve event"
+// @Security				BearerAuth
+// @Router /api/v1/events/{id} [DELETE]
 func (app *application) deleteEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -188,6 +203,23 @@ func (app *application) deleteEvent(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// addAttendeeToEvent - adds a attendee to a event
+//
+// @Summary 				Adds a attendee to a event in the databse
+// @Description 		Adds a attendee to a event in the database (needs authetication)
+// @Tags 						Events
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "event ID"
+// @Param						userId path int true "attendee to be added"
+// @Success 				201
+// @Failure 400 {string} string = "Error: Invalid event ID"
+// @Failure 403 {string} string = "Error: You are not authorized to delete this event"
+// @Failure 404 {Error}  Error  = err.Error()
+// @Failure 409 {string} string = "Error: Attendee already exists"
+// @Failure 500 {string} string = "Error: Failed to retrieve event"
+// @Security				BearerAuth
+// @Router /api/v1/events/{id}/attendees/{userId} [POST]
 func (app *application) addAttendeeToEvent(c *gin.Context) {
 	eventId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

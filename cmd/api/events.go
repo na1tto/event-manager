@@ -207,12 +207,12 @@ func (app *application) deleteEvent(c *gin.Context) {
 //
 // @Summary 				Adds a attendee to a event in the databse
 // @Description 		Adds a attendee to a event in the database (needs authetication)
-// @Tags 						Events
+// @Tags 						Attendees
 // @Accept 					json
 // @Produce 				json
 // @Param						id path int true "event ID"
 // @Param						userId path int true "attendee to be added"
-// @Success 				201
+// @Success 				201	 {object} database.Attendee
 // @Failure 400 {string} string = "Error: Invalid event ID"
 // @Failure 403 {string} string = "Error: You are not authorized to delete this event"
 // @Failure 404 {Error}  Error  = err.Error()
@@ -284,6 +284,18 @@ func (app *application) addAttendeeToEvent(c *gin.Context) {
 	c.JSON(http.StatusCreated, attendee)
 }
 
+// getAllAttendeesForEvent - gets the attendees list from a event
+//
+// @Summary 				Gets the attendees list from a event
+// @Description 		Gets the attendees list from a event
+// @Tags 						Attendees
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "event ID"
+// @Success 				200 {object} []database.User
+// @Failure 400 {Error} Error = err.Error()
+// @Failure 500 {Error} Error = err.Error()
+// @Router /api/v1/events/{id}/attendees/ [GET]
 func (app *application) getAllAttendeesForEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -300,6 +312,23 @@ func (app *application) getAllAttendeesForEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// GetAttendeesByEvent - deletes a attendee from a event
+//
+// @Summary 				Deletes a attendee from a event
+// @Description 		Deletes a attendee from a envent through the event and attendee's ID
+// @Tags 						Attendees
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "event ID"
+// @Param						userId path int true "user ID"
+// @Success 				204
+// @Failure 400 {Error} Error = err.Error()
+// @Failure 401 {Error} Error=err.Error()
+// @Failure 403 {Error} Error = err.Error()
+// @Failure 404 {Error} Error = err.Erro()
+// @Failure 500 {Error} Error = err.Error()
+// Security 				BearerAuth
+// @Router /api/v1/events/{id}/attendees/{userId} [DELETE]
 func (app *application) deleteAttendeeFromEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -338,6 +367,19 @@ func (app *application) deleteAttendeeFromEvent(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+// getEventsByAttendee - gets the eventes per attendee
+//
+// @Summary 				Gets the list of events a user is attending
+// @Description 		Gets tge list of events a user is attending using it's ID
+// @Tags 						Attendees
+// @Accept 					json
+// @Produce 				json
+// @Param						id path int true "user ID"
+// @Success 				200
+// @Failure 400 {Error} Error = err.Error()
+// @Failure 500 {Error} Error = err.Error()
+// Security 				BearerAuth
+// @Router /api/v1/attendees/{id}/events [GET]
 func (app *application) getEventsByAttendee(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

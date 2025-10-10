@@ -1,4 +1,13 @@
 definitions:
+  database.Attendee:
+    properties:
+      eventId:
+        type: integer
+      id:
+        type: integer
+      userId:
+        type: integer
+    type: object
   database.Event:
     properties:
       date:
@@ -70,6 +79,33 @@ info:
   title: Go Gin Rest API
   version: "1.0"
 paths:
+  /api/v1/attendees/{id}/events:
+    get:
+      consumes:
+      - application/json
+      description: Gets tge list of events a user is attending using it's ID
+      parameters:
+      - description: user ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: Error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: Error
+      summary: Gets the list of events a user is attending
+      tags:
+      - Attendees
   /api/v1/auth/login:
     post:
       consumes:
@@ -279,7 +315,82 @@ paths:
       summary: Updates a event
       tags:
       - Events
+  /api/v1/events/{id}/attendees/:
+    get:
+      consumes:
+      - application/json
+      description: Gets the attendees list from a event
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/database.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: Error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: Error
+      summary: Gets the attendees list from a event
+      tags:
+      - Attendees
   /api/v1/events/{id}/attendees/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a attendee from a envent through the event and attendee's
+        ID
+      parameters:
+      - description: event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: user ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            type: Error
+        "401":
+          description: Unauthorized
+          schema:
+            type: Error
+        "403":
+          description: Forbidden
+          schema:
+            type: Error
+        "404":
+          description: Not Found
+          schema:
+            type: Error
+        "500":
+          description: Internal Server Error
+          schema:
+            type: Error
+      summary: Deletes a attendee from a event
+      tags:
+      - Attendees
     post:
       consumes:
       - application/json
@@ -300,6 +411,8 @@ paths:
       responses:
         "201":
           description: Created
+          schema:
+            $ref: '#/definitions/database.Attendee'
         "400":
           description: 'Error: Invalid event ID'
           schema:
@@ -324,7 +437,7 @@ paths:
       - BearerAuth: []
       summary: Adds a attendee to a event in the databse
       tags:
-      - Events
+      - Attendees
 securityDefinitions:
   BearerAuth:
     description: Enter your bearer token in the format ++Bearer &lt;token&gt;**

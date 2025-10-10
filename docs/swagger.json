@@ -7,6 +7,47 @@
         "version": "1.0"
     },
     "paths": {
+        "/api/v1/attendees/{id}/events": {
+            "get": {
+                "description": "Gets tge list of events a user is attending using it's ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attendees"
+                ],
+                "summary": "Gets the list of events a user is attending",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/login": {
             "post": {
                 "description": "Logs a user in the application providing a bearer token through the JWT Login Method",
@@ -329,6 +370,53 @@
                 }
             }
         },
+        "/api/v1/events/{id}/attendees/": {
+            "get": {
+                "description": "Gets the attendees list from a event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attendees"
+                ],
+                "summary": "Gets the attendees list from a event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/database.User"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/events/{id}/attendees/{userId}": {
             "post": {
                 "security": [
@@ -344,7 +432,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Events"
+                    "Attendees"
                 ],
                 "summary": "Adds a attendee to a event in the databse",
                 "parameters": [
@@ -365,7 +453,10 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created"
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/database.Attendee"
+                        }
                     },
                     "400": {
                         "description": "Error: Invalid event ID",
@@ -398,10 +489,88 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "Deletes a attendee from a envent through the event and attendee's ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Attendees"
+                ],
+                "summary": "Deletes a attendee from a event",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "event ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "Error"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
+        "database.Attendee": {
+            "type": "object",
+            "properties": {
+                "eventId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
         "database.Event": {
             "type": "object",
             "required": [
